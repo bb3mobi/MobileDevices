@@ -1,5 +1,4 @@
 <?php
-
 /**
 *
 * @package Mobile Devices
@@ -9,14 +8,6 @@
 */
 
 namespace bb3mobi\MobileDevices\event;
-
-/**
- * @ignore
- */
-if (!defined('IN_PHPBB'))
-{
-	exit;
-}
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

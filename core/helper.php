@@ -25,7 +25,7 @@ class helper
 
 	/** Get type */
 	const VER = 'ver';
-	 /** Get web version */
+	/** Get web version */
 	const WEB = 'web';
 	/** Get mobile version */
 	const MOBI = 'mobi';
