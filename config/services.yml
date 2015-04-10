@@ -1,0 +1,14 @@
+services:
+    bb3mobi.MobileDevices.listener:
+        class: bb3mobi\MobileDevices\event\listener
+        arguments:
+            - @bb3mobi.MobileDevices.helper
+        tags:
+            - { name: event.listener }
+    bb3mobi.MobileDevices.helper:
+        class: bb3mobi\MobileDevices\core\helper
+        arguments:
+            - @config
+            - @request
+            - @template
+            - @user

@@ -1,0 +1,34 @@
+{
+    "name": "bb3mobi/MobileDevices",
+    "type": "phpbb-extension",
+    "description": "Detect style for mobile or for web devices",
+    "homepage": "http://bb3.mobi",
+    "version": "1.0.1",
+    "time": "2014-12-24",
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Anvar",
+            "email": "anvar.all@mail.ru",
+            "homepage": "http://apwa.ru",
+            "role": "phpBB Developer"
+        },
+        {
+            "name": "Nekstati",
+            "homepage": "http://www.phpbbguru.net",
+            "role": "Based idea in phpbb3.0"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+      "phpbb/epv": "dev-master"
+    },
+    "extra": {
+        "display-name": "Mobile Devices",
+        "soft-require": {
+        "phpbb/phpbb": "3.1.*@dev"
+        }
+    }
+}
