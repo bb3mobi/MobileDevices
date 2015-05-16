@@ -50,7 +50,7 @@ class helper
 
 		if (($style_cookie == self::MOBI && $detect_mobile_device) || ($style_cookie == self::WEB && !$detect_mobile_device))
 		{
-			$this->redirect_cookie(self::VER, '');
+			$this->redirect_cookie(self::VER);
 		}
 
 		if (($detect_mobile_device && !$style_cookie) || $style_cookie == self::MOBI)
@@ -60,7 +60,7 @@ class helper
 			{
 				$url_style = $this->request_url(self::VER . '=' . self::MOBI, $url_style);
 				// cookie add and redirect page
-				redirect($this->redirect_cookie(self::VER, $request_var));
+				redirect($this->redirect_cookie(self::VER, $request_var), false, true);
 			}
 			$s_mobile_device = true;
 		}
@@ -71,7 +71,7 @@ class helper
 			{
 				$url_style = $this->request_url(self::VER . '=' . self::WEB, $url_style);
 				// cookie add and redirect page
-				redirect($this->redirect_cookie(self::VER, $request_var));
+				redirect($this->redirect_cookie(self::VER, $request_var), false, true);
 			}
 		}
 
@@ -150,20 +150,15 @@ class helper
 	}
 
 	/** Cookie set and return to session page */
-	private function redirect_cookie($name, $request)
+	private function redirect_cookie($name, $request = '')
 	{
 		$time = ($request) ? 0 : time() + 31536000;
 		$this->user->set_cookie($name, $request, $time);
 
 		if ($request)
 		{
-			$redirect = $this->request->variable('redirect', $this->user->data['session_page']);
-			//$redirect = $this->request_url($name . '=' . $request, build_url());
-			if (strrpos($this->user->data['session_page'], 'app.') === 0)
-			{
-				$redirect = generate_board_url();
-			}
-			return reapply_sid(urldecode($redirect));
+			$redirect = $this->request_url($name . '=' . $request, build_url());
+			return urldecode($redirect);
 		}
 	}
 
