@@ -94,7 +94,7 @@ class helper
 			$style_fix = $this->request_cookie('style');
 			if (($this->config['default_style'] == $this->user->data['user_style']) || ($this->user->data['user_id'] == ANONYMOUS && !$style_fix))
 			{
-				$style_cookie = $this->request_cookie(self::VER, '');
+				$style_cookie = $this->request_cookie(self::VER);
 				if (($this->detect_mobile_device() && $style_cookie != self::WEB) || $style_cookie == self::MOBI)
 				{
 					// Set the style to display
@@ -102,7 +102,6 @@ class helper
 				}
 			}
 		}
-		return false;
 	}
 
 	/** Detect Mobile Devices */
@@ -117,7 +116,6 @@ class helper
 				return true;
 			}
 		}
-		return false;
 	}
 
 	/** Default User Style */
@@ -152,7 +150,7 @@ class helper
 	/** Cookie set and return to session page */
 	private function redirect_cookie($name, $request = '')
 	{
-		$time = ($request) ? 0 : time() + 31536000;
+		$time = ($request) ? 0 : time() + 360000;
 		$this->user->set_cookie($name, $request, $time);
 
 		if ($request)
