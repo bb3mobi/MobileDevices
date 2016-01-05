@@ -47,19 +47,6 @@ class helper
 		// Detect user devices
 		$detect_mobile_device = $this->detect_mobile_device();
 
-		// User registered invert style
-		if ($this->user->data['is_registered'])
-		{
-			$user_style_id = ($user_style == self::MOBI) ? $this->config['mobile_style'] : $this->config['default_style'];
-
-			if ($user_style && $user_style_id != $this->user->data['user_style'])
-			{
-				$this->styles_change(($user_style == self::MOBI) ? $this->config['mobile_style'] : $this->config['default_style']);
-			}
-
-			$user_style = ($this->user->data['user_style'] == $this->config['mobile_style']) ? self::MOBI : self::WEB;
-		}
-
 		// Delete cookies
 		if (($user_style == self::MOBI && $detect_mobile_device) || ($user_style == self::WEB && !$detect_mobile_device))
 		{
@@ -68,26 +55,17 @@ class helper
 
 		if ($request_var)
 		{
-			if ($this->user->data['is_registered'])
-			{
-				// change user style
-				$this->styles_change(($request_var == self::MOBI) ? $this->config['mobile_style'] : $this->config['default_style']);
-			}
-			else
-			{
-				// cookie guest style
-				$this->user->set_cookie(self::VER, $request_var, time() + 360000);
-			}
+			$this->user->set_cookie(self::VER, $request_var, time() + 360000);
 			// redirect page
-			$redirect = $this->request_url(self::VER . '=' . $request_var, build_url());
-			redirect(urldecode($redirect), false, true);
+			$redirect = $this->request_url(self::VER . '=' . $request_var, true);
+			redirect(append_sid($redirect, false, false, false, true));//, false, true); // urldecode($redirect)
 		}
 
 		$s_web_device = true;
-		$url_style = $this->request_url(self::VER . '=' . self::MOBI);
+		$url_style = append_sid($this->request_url(self::VER . '=' . self::MOBI), false, true, false, true);
 		if (($detect_mobile_device && !$user_style) || $user_style == self::MOBI)
 		{
-			$url_style = $this->request_url(self::VER . '=' . self::WEB);
+			$url_style = append_sid($this->request_url(self::VER . '=' . self::WEB), false, true, false, true);
 			$s_web_device = false;
 		}
 
@@ -113,7 +91,7 @@ class helper
 			}
 
 			$user_style = $this->request->variable($this->config['cookie_name'] . '_' . self::VER, '', false, 3);
-			if ($user_style == self::MOBI || ($user_style != self::WEB && !$this->user->data['is_registered'] && $this->detect_mobile_device()))
+			if ($user_style == self::MOBI || ($user_style != self::WEB && $this->detect_mobile_device()))
 			{
 				// Set the style to display
 				return $this->config['mobile_style'];
@@ -133,17 +111,6 @@ class helper
 				return true;
 			}
 		}
-	}
-
-	/** Change User Style */
-	private function styles_change($style)
-	{
-		global $db;
-
-		$sql = 'UPDATE ' . USERS_TABLE . "
-			SET user_style = " . (int) $style . "
-			WHERE user_id = {$this->user->data['user_id']}";
-		$db->sql_query($sql);
 	}
 
 	/** Default User Style */
@@ -171,7 +138,7 @@ class helper
 	/** Url get param add and clear */
 	private function request_url($get_path = false, $url_clear = false)
 	{
-		$url = ($url_clear) ? $url_clear : build_url();
+		$url = build_url();
 		if ($get_path)
 		{
 			if ($url_clear)
