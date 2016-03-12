@@ -10,5 +10,6 @@ services:
         arguments:
             - @config
             - @request
+            - @path_helper
             - @template
             - @user

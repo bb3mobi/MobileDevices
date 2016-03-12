@@ -17,6 +17,9 @@ class helper
 	/** @var \phpbb\request\request_interface */
 	protected $request;
 
+	/** @var \phpbb\path_helper */
+	protected $phpbb_path_helper;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -30,10 +33,11 @@ class helper
 	/** Get mobile version */
 	const MOBI = 'mobi';
 
-	public function __construct(\phpbb\config\config $config, \phpbb\request\request_interface $request, \phpbb\template\template $template, \phpbb\user $user)
+	public function __construct(\phpbb\config\config $config, \phpbb\request\request_interface $request, \phpbb\path_helper $path_helper, \phpbb\template\template $template, \phpbb\user $user)
 	{
 		$this->config = $config;
 		$this->request = $request;
+		$this->phpbb_path_helper = $path_helper;
 		$this->template = $template;
 		$this->user = $user;
 	}
@@ -57,17 +61,19 @@ class helper
 		{
 			$this->user->set_cookie(self::VER, $request_var, time() + 360000);
 			// redirect page
-			$redirect = $this->request_url(self::VER . '=' . $request_var, true);
-			redirect(append_sid($redirect, false, false, false, true));//, false, true); // urldecode($redirect)
+			//redirect(append_sid(build_url('ver'), false, false, false, true));//, false, true); // urldecode($redirect)
+			redirect(build_url('ver'));
 		}
 
 		$s_web_device = true;
-		$url_style = append_sid($this->request_url(self::VER . '=' . self::MOBI), false, true, false, true);
+		$url_style = build_url('style');
+		$url_params = array(self::VER => self::MOBI);
 		if (($detect_mobile_device && !$user_style) || $user_style == self::MOBI)
 		{
-			$url_style = append_sid($this->request_url(self::VER . '=' . self::WEB), false, true, false, true);
+			$url_params = array(self::VER => self::WEB);
 			$s_web_device = false;
 		}
+		$url_style = $this->phpbb_path_helper->append_url_params($url_style, $url_params);
 
 		$this->user->add_lang_ext('bb3mobi/MobileDevices', 'device_style');
 
@@ -133,25 +139,5 @@ class helper
 		{
 			return $this->config['mobile_style'];
 		}
-	}
-
-	/** Url get param add and clear */
-	private function request_url($get_path = false, $url_clear = false)
-	{
-		$url = build_url();
-		if ($get_path)
-		{
-			if ($url_clear)
-			{
-				$url_delim = array('&amp;' . $get_path, '&' . $get_path, $get_path . '&amp;', $get_path . '&', '?' . $get_path);
-				$url = str_replace($url_delim, "", $url);
-			}
-			else
-			{
-				$url_delim = (strpos($url, '?') === false) ? '?' : ((strpos($url, '?') === strlen($url) - 1) ? '' : '&amp;');
-				$url .= $url_delim . $get_path;
-			}
-		}
-		return $url;
 	}
 }
